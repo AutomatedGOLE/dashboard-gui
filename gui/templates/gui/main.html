@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html>
+<head>
+    <title>{{ title }}</title>
+    <link rel="stylesheet" media="screen" href="{% static "css/bootstrap.min.css" %}">
+    <link rel="stylesheet" media="screen" href="{% static "css/font-awesome.min.css" %}">
+    <link rel="stylesheet" media="screen" href="{% static "css/main.css" %}">
+    <link rel="shortcut icon" type="image/png" href="{% static "images/uva-favicon.ico" %}">
+</head>
+<body>
+<div class="wrapper">
+    <header>
+        <img align="right" src="https://www.surf.nl/binaries/werkmaatschappijlogo/content/gallery/surf/logos/surfnet.png">
+        <img align="left" src="https://homepages.staff.os3.nl/~delaat/logos/raw/logo-UvA-wide.jpg" width="60%" height="60%">
+        <img align="center" src="http://delaat.net/logos/logo-sne/logo-sne-blue.png" height="10%" width="10%">
+    </header>
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <div class="container">
+                {% block navigation %}
+                    <ul class="nav">
+                    <li><a href="control_plane">Control Plane</a></li>
+                    <li><a href="data_plane">Data Plane</a><li>
+                    </ul>
+                {% endblock %}
+            </div>
+        </div>
+    </nav>
+    {% block content %}
+        Something should be placed here!!!
+    {% endblock %}
+    <footer>
+        <div class="content-some-dense">
+            <p align="center">University of Amsterdam, System and Network Engineering group - <a href=\"http://sne.science.uva.nl\">sne.science.uva.nl</a> | <a href="https://www.surf.nl">SURFnet</a></p>
+        </div>
+    </footer>
+</div>
+</body>
+</html>
