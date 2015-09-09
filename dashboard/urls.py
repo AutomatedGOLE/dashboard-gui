@@ -18,7 +18,7 @@ from django.contrib import admin
 
 urlpatterns = [
                        url(r'^$', 'gui.views.index', name='index'),
-                       url(r'^ti$', 'gui.views.cpm', name='cpm'),
-                       url(r'^ti$', 'gui.views.dpm', name='cpm'),
-                       url(r'^admin/', include(admin.site.urls)),
+                       url(r'^dpm$', 'gui.views.cpm', name='dpm'),
+                       url(r'^cpm$', 'gui.views.dpm', name='cpm'),
+                       #url(r'^admin/', include(admin.site.urls)),
 ]

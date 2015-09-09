@@ -1,0 +1,73 @@
+{% extends 'gui/main.html' %}
+{% block content %}
+        <div class="content">
+        {% csrf_token %}
+             <section>
+                 <h1>
+                     PeersWith Mismatches
+                 </h1>
+                 <div class="content">
+                 <table class="table table-bordered table-striped" >
+                 <thead>
+                 <tr>
+                 <th>NSA 1</th>
+                 <th>NSA 2</th>
+                 </tr>
+                 </thead>
+                 <tbody>
+                 {% for nsa1, nsa2 in peerswithmismatches %}
+                 <tr>
+                     <td style="padding-left: 30px">{{ nsa1 }}</td>
+                     <td style="padding-left: 20px">{{ nsa2 }}</td>
+                 </tr>
+                 {% endfor %}
+                 </tbody>
+                 </table>
+                 </div>
+             </section>
+            <section>
+                 <h1>
+                     No Peers
+                 </h1>
+                 <div class="content">
+                 <table class="table table-bordered table-striped" >
+                 <thead>
+                 <tr>
+                 <th>NSA</th>
+                 </tr>
+                 </thead>
+                 <tbody>
+                 {% for nsa in nopeers %}
+                 <tr>
+                     <td style="padding-left: 30px">{{ nsa }}</td>
+                 </tr>
+                 {% endfor %}
+                 </tbody>
+                 </table>
+                 </div>
+             </section>
+            <section>
+                 <h1>
+                     Unknown Peers
+                 </h1>
+                 <div class="content">
+                 <table class="table table-bordered table-striped" >
+                 <thead>
+                 <tr>
+                 <th>NSA</th>
+                 <th>Unknown NSA</th>
+                 </tr>
+                 </thead>
+                 <tbody>
+                 {% for nsa, unknown in unknownpeers %}
+                 <tr>
+                     <td style="padding-left: 30px">{{ nsa }}</td>
+                     <td style="padding-left: 20px">{{ unknown }}</td>
+                 </tr>
+                 {% endfor %}
+                 </tbody>
+                 </table>
+                 </div>
+             </section>
+        </div>
+{% endblock %}
