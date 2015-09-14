@@ -14,10 +14,11 @@ def cpm(request):
     nopeers = db.get_nopeers(cursor)
     unknownpeers = db.get_unknownpeers(cursor)
     peerswithmismatches = db.get_peerswithmismatches(cursor)
+    notref = db.get_notref(cursor)
 
     db.database_end(db_connection)
 
-    context = {'unknownpeers' : unknownpeers, 'nopeers' : nopeers, 'peerswithmismatches': peerswithmismatches}
+    context = {'unknownpeers' : unknownpeers, 'nopeers' : nopeers, 'peerswithmismatches': peerswithmismatches, 'notref': notref}
 
     return render(request, 'gui/cpm.html', context)
 

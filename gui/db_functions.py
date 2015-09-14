@@ -35,6 +35,12 @@ def get_peerswithmismatches(cursor):
     return cursor.fetchall()
 
 
+def get_notref(cursor):
+    query = "SELECT * FROM notref"
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
 def get_isalias(cursor):
     query = "SELECT * FROM isalias"
     cursor.execute(query)

@@ -69,5 +69,26 @@
                  </table>
                  </div>
              </section>
+            <section>
+                 <h1>
+                     NSAs not referenced
+                 </h1>
+                 <div class="content">
+                 <table class="table table-bordered table-striped" >
+                 <thead>
+                 <tr>
+                 <th>NSA</th>
+                 </tr>
+                 </thead>
+                 <tbody>
+                 {% for nsa in notref %}
+                 <tr>
+                     <td style="padding-left: 30px">{{ nsa }}</td>
+                 </tr>
+                 {% endfor %}
+                 </tbody>
+                 </table>
+                 </div>
+             </section>
         </div>
 {% endblock %}
