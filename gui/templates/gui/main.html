@@ -8,6 +8,19 @@
     <link rel="stylesheet" media="screen" href="{% static "css/main.css" %}">
     <link rel="shortcut icon" type="image/png" href="{% static "images/uva-favicon.ico" %}">
 </head>
+<style>
+
+.link {
+  stroke: #000;
+  stroke-width: 1.2px;
+}
+
+.node text {
+  pointer-events: none;
+  font: 11px sans-serif;
+}
+
+</style>
 <body>
 <div class="wrapper">
     <header>
@@ -20,8 +33,8 @@
             <div class="container">
                 {% block navigation %}
                     <ul class="nav">
-                    <li><a href="dpm">Control Plane</a></li>
-                    <li><a href="cpm">Data Plane</a><li>
+                    <li><a href="cpm">Control Plane</a></li>
+                    <li><a href="dpm">Data Plane</a><li>
                     </ul>
                 {% endblock %}
             </div>
