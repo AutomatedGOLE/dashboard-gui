@@ -12,14 +12,17 @@ def duplicates_remove(seq):
     return [ x for x in seq if not (x in seen or seen_add(x))]
 
 
-def graph_data(peerswith):
+def graph_data(peerswith, peerswithmismatches, unknownpeers):
 
     json_data = ''
 
     peerswith_col0 = [row[0] for row in peerswith]
     peerswith_col1 = [row[1] for row in peerswith]
 
-    nsa_list = duplicates_remove(peerswith_col0 + peerswith_col1)
+    peerswithmismatches_col0 = [row[0] for row in peerswithmismatches]
+    peerswithmismatches_col1 = [row[1] for row in peerswithmismatches]
+
+    nsa_list = duplicates_remove(peerswith_col0 + peerswith_col1 + peerswithmismatches_col0 + peerswithmismatches_col1)
 
     # Add nodes
     for nsa in nsa_list:
@@ -27,7 +30,11 @@ def graph_data(peerswith):
             json_data = "{ \"nodes\":[ "
         else:
             json_data += ", "
-        json_data += "{\"name\":\"" + str(nsa).replace('urn:ogf:network:','') + "\",\"group\":1}"
+
+        if nsa in [row[1] for row in unknownpeers]:
+            json_data += "{\"name\":\"" + str(nsa).replace('urn:ogf:network:','') + "\",\"group\":1}"
+        else:
+            json_data += "{\"name\":\"" + str(nsa).replace('urn:ogf:network:','') + "\",\"group\":0}"
 
     # Add links
     for nsa1, nsa2 in peerswith:
@@ -35,7 +42,10 @@ def graph_data(peerswith):
             json_data += " ],\"links\":[ "
         else:
             json_data += ", "
-        json_data += "{\"source\":" + str(nsa_list.index(nsa1)) + ",\"target\":" + str(nsa_list.index(nsa2)) + ",\"value\":1}"
+        json_data += "{\"source\":" + str(nsa_list.index(nsa1)) + ",\"target\":" + str(nsa_list.index(nsa2)) + ",\"value\":2}"
+
+    for nsa1, nsa2 in peerswithmismatches:
+        json_data += ", {\"source\":" + str(nsa_list.index(nsa1)) + ",\"target\":" + str(nsa_list.index(nsa2)) + ",\"value\":3}"
 
     json_data += " ]}"
 
@@ -61,7 +71,7 @@ def cpm(request):
 
     db.database_end(db_connection)
 
-    context = {'graph_data': graph_data(peerswith), 'unknownpeers' : unknownpeers, 'nopeers' : nopeers, 'peerswithmismatches': peerswithmismatches, 'notref': notref}
+    context = {'graph_data': graph_data(peerswith, peerswithmismatches, unknownpeers), 'unknownpeers' : unknownpeers, 'nopeers' : nopeers, 'peerswithmismatches': peerswithmismatches, 'notref': notref}
 
     return render(request, 'gui/cpm.html', context)
 
