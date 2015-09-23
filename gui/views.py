@@ -32,9 +32,9 @@ def graph_data(peerswith, peerswithmismatches, unknownpeers):
             json_data += ", "
 
         if nsa in [row[1] for row in unknownpeers]:
-            json_data += "{\"name\":\"" + str(nsa).replace('urn:ogf:network:','') + "\",\"group\":1}"
+            json_data += "{\"name\":\"" + str(nsa).replace('urn:ogf:network:', '') + "\",\"group\":1}"
         else:
-            json_data += "{\"name\":\"" + str(nsa).replace('urn:ogf:network:','') + "\",\"group\":0}"
+            json_data += "{\"name\":\"" + str(nsa).replace('urn:ogf:network:', '') + "\",\"group\":0}"
 
     # Add links
     for nsa1, nsa2 in peerswith:
@@ -79,7 +79,7 @@ def cpm(request):
 def dpm(request):
 
     db_connection = db.database_start()
-    cursor =  db_connection.cursor()
+    cursor = db_connection.cursor()
 
     isalias = db.get_isalias(cursor)
 
