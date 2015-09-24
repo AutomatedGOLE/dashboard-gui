@@ -356,6 +356,7 @@ a[rel="tooltip"]:hover {
 .table-bordered th,
 .table-bordered td {
     border-left: 1px solid #bfbfbf;
+    word-wrap:break-word
 }
 
 .table-striped tbody > tr:nth-child(2n+1) > td,
@@ -421,6 +422,7 @@ a[rel="tooltip"]:hover {
 
 .table {
     margin-bottom: 10px;
+    table-layout: fixed;
 }
 
 .table .cw35 {

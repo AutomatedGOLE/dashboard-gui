@@ -97,10 +97,10 @@
         <script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
         <script type="text/javascript">
 
+            var graph = {{ graph_data|safe }};
+
             var width = 960,
                 height = 800;
-
-            var graph = {{ graph_data|safe }};
 
             // Blue, Red, Black, Yellow
             var colors = ["#1f77b4", "#d62728", "#000000", "#ff7f0e"]
