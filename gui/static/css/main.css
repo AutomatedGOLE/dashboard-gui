@@ -18,7 +18,9 @@ section {
 }
 
 .content {
-    padding: 20px;
+    padding: 5px;
+    /*padding-top: 5px;*/
+    /*padding-bottom: 10px;*/
 }
 
 .span3 .content {
@@ -740,19 +742,20 @@ th.sortable.headerSortUp:hover i:before {
     stroke-width: 2.5px;
 }
 
-.link {
-    stroke: #999;
-    stroke-opacity: 2px;
-}
-
 .node text {
-    font: 8px sans-serif;
-    pointer-events: none;
-    color: black;
+  pointer-events: none;
+  font: 11px sans-serif;
+  color: black;
 }
 
 circle {
     cursor: pointer;
-    stroke: #000;
-    stroke-width: .5px;
+    /*stroke: #999;*/
+    stroke-width: 1.5px;
 }
+
+.link {
+  stroke: #000;
+  stroke-width: 1.2px;
+}
+

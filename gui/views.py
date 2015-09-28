@@ -1,6 +1,7 @@
 from django.shortcuts import render
 import db_functions as db
 import json
+import simplejson
 
 def index(request):
     return render(request, 'gui/index.html')
@@ -49,12 +50,6 @@ def graph_data(peerswith, peerswithmismatches, unknownpeers):
 
     json_data += " ]}"
 
-
-    #DEBUG
-    f = open('/tmp/dashboardlog', 'w')
-    f.write(json_data)
-    f.close()
-
     return json_data
 
 
@@ -68,10 +63,11 @@ def cpm(request):
     unknownpeers = db.get_unknownpeers(cursor)
     peerswithmismatches = db.get_peerswithmismatches(cursor)
     notref = db.get_notref(cursor)
+    cp_connectivity = db.get_cp_connectivity(cursor)
 
     db.database_end(db_connection)
 
-    context = {'graph_data': graph_data(peerswith, peerswithmismatches, unknownpeers), 'unknownpeers' : unknownpeers, 'nopeers' : nopeers, 'peerswithmismatches': peerswithmismatches, 'notref': notref}
+    context = {'graph_data': graph_data(peerswith, peerswithmismatches, unknownpeers), 'unknownpeers' : unknownpeers, 'nopeers' : nopeers, 'peerswithmismatches': peerswithmismatches, 'notref': notref, 'cp_connectivity': simplejson.dumps(cp_connectivity)}
 
     return render(request, 'gui/cpm.html', context)
 

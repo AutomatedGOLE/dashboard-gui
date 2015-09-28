@@ -98,12 +98,16 @@
         <script type="text/javascript">
 
             var graph = {{ graph_data|safe }};
+//
+//            var ping = JSON.parse({{ cp_connectivity|safe }});
 
             var width = 960,
                 height = 800;
 
             // Blue, Red, Black, Yellow
             var colors = ["#1f77b4", "#d62728", "#000000", "#ff7f0e"]
+
+            var ping_colors = ["#008000", "#d62728", "#000000"]
 
             var vis = d3.select("#graphHolder").append("svg:svg")
             .attr("width", width)
@@ -156,7 +160,18 @@
                 node.append("circle")
                     .attr("class", "circle")
                     .attr("r", 30) //radious
-                    .style("fill", function(d) { return colors[d.group]; });
+                    .style("fill", function(d) { return colors[d.group]; })
+//                    .style("stroke", "red")
+                    .style("stroke", function(d) {
+                        connectivity = {{ cp_connectivity|safe }};
+
+                        for(key in connectivity) {
+                            if(connectivity[key][0].indexOf(d.name) != -1 ){
+                                return ping_colors[connectivity[key][1]];
+                            }
+                        }
+                        return ping_colors[2];
+                        });
 
                 node.append("text")
 //                    .attr("dx", 12)

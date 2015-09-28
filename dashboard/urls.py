@@ -14,10 +14,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
 from django.conf.urls import include, url
+from django.views.generic.base import RedirectView
 from django.contrib import admin
 
 urlpatterns = [
-                       url(r'^$', 'gui.views.index', name='index'),
+                       #url(r'^$', 'gui.views.index', name='index'),
+                       url(r'^$', RedirectView.as_view(url='overview', permanent=False), name='index'),
+                       url(r'^overview$', 'gui.views.index', name='index'),
                        url(r'^dpm$', 'gui.views.dpm', name='dpm'),
                        url(r'^cpm$', 'gui.views.cpm', name='cpm'),
                        #url(r'^admin/', include(admin.site.urls)),

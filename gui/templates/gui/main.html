@@ -8,19 +8,6 @@
     <link rel="stylesheet" media="screen" href="{% static "css/main.css" %}">
     <link rel="shortcut icon" type="image/png" href="{% static "images/uva-favicon.ico" %}">
 </head>
-<style>
-
-.link {
-  stroke: #000;
-  stroke-width: 1.2px;
-}
-
-.node text {
-  pointer-events: none;
-  font: 11px sans-serif;
-}
-
-</style>
 <body>
 <div class="wrapper">
     <header>
@@ -28,11 +15,15 @@
         <img align="left" src="https://homepages.staff.os3.nl/~delaat/logos/raw/logo-UvA-wide.jpg" width="60%" height="60%">
         <img align="center" src="http://delaat.net/logos/logo-sne/logo-sne-blue.png" height="10%" width="10%">
     </header>
+    <div>
+        <p style="margin-bottom: 25px;font-size:350%;text-align:center;font-weight:bold;">AutoGOLE Dashboard</p>
+    </div>
     <nav class="navbar">
         <div class="navbar-inner">
             <div class="container">
                 {% block navigation %}
                     <ul class="nav">
+                    <li><a href="overview">Overview</a></li>
                     <li><a href="cpm">Control Plane</a></li>
                     <li><a href="dpm">Data Plane</a><li>
                     </ul>
@@ -45,7 +36,7 @@
     {% endblock %}
     <footer>
         <div class="content-some-dense">
-            <p align="center">University of Amsterdam, System and Network Engineering group - <a href=\"http://sne.science.uva.nl\">sne.science.uva.nl</a> | <a href="https://www.surf.nl">SURFnet</a></p>
+            <p align="center">University of Amsterdam, System and Network Engineering group - <a href="http://sne.science.uva.nl">sne.science.uva.nl</a> | <a href="https://www.surf.nl">SURFnet</a></p>
         </div>
     </footer>
 </div>

@@ -1,4 +1,5 @@
 import mysql.connector as db
+from collections import defaultdict
 
 
 def database_start():
@@ -45,3 +46,16 @@ def get_isalias(cursor):
     query = "SELECT * FROM isalias"
     cursor.execute(query)
     return cursor.fetchall()
+
+
+def get_cp_connectivity(cursor):
+    query = "SELECT * FROM cp_connectivity"
+    cursor.execute(query)
+    return cursor.fetchall()
+
+#
+# def matrix_to_dic(matrix):
+#     dic = defaultdict(int)
+#     for a, b in matrix:
+#         dic[a] = b
+#     return dic
