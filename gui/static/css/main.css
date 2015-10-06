@@ -734,6 +734,11 @@ th.sortable.headerSortUp:hover i:before {
     border-radius: 0;
 }
 
+#legend {
+    width: 70%;
+    margin: 0 auto;
+}
+
 /* =============================== */
 /* This is for graph visualization */
 /* =============================== */
@@ -750,12 +755,21 @@ th.sortable.headerSortUp:hover i:before {
 
 circle {
     cursor: pointer;
-    /*stroke: #999;*/
-    stroke-width: 1.5px;
+    stroke: #000;
+    stroke-width: 0.8px;
 }
 
 .link {
   stroke: #000;
   stroke-width: 1.2px;
+  fill: none;
 }
 
+/*line.arrow {*/
+    /*stroke: #666;*/
+    /*stroke-width: 1px;*/
+/*}*/
+
+/*marker#arrow {*/
+    /*fill: #666;*/
+/*}*/

@@ -48,6 +48,12 @@ def get_isalias(cursor):
     return cursor.fetchall()
 
 
+def get_isaliasvlans(cursor):
+    query = "SELECT * FROM isaliasvlans"
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
 def get_cp_connectivity(cursor):
     query = "SELECT * FROM cp_connectivity"
     cursor.execute(query)

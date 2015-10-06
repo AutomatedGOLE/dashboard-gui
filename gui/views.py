@@ -13,7 +13,19 @@ def duplicates_remove(seq):
     return [ x for x in seq if not (x in seen or seen_add(x))]
 
 
-def graph_data(peerswith, peerswithmismatches, unknownpeers):
+def is_reachable(nsa, cp_connectivity):
+    cp_connectivity_col0 = [row[0] for row in cp_connectivity]
+    cp_connectivity_col1 = [row[1] for row in cp_connectivity]
+
+    nsa_index = cp_connectivity_col0.index(nsa)
+
+    if int(cp_connectivity_col1[nsa_index]) == 0:
+        return 1
+    else:
+        return 0
+
+
+def graph_data(peerswith, peerswithmismatches, unknownpeers, cp_connectivity):
 
     json_data = ''
 
@@ -34,8 +46,10 @@ def graph_data(peerswith, peerswithmismatches, unknownpeers):
 
         if nsa in [row[1] for row in unknownpeers]:
             json_data += "{\"name\":\"" + str(nsa).replace('urn:ogf:network:', '') + "\",\"group\":1}"
+        elif is_reachable(nsa, cp_connectivity):
+            json_data += "{\"name\":\"" + str(nsa).replace('urn:ogf:network:', '') + "\",\"group\":5}"
         else:
-            json_data += "{\"name\":\"" + str(nsa).replace('urn:ogf:network:', '') + "\",\"group\":0}"
+            json_data += "{\"name\":\"" + str(nsa).replace('urn:ogf:network:', '') + "\",\"group\":2}"
 
     # Add links
     for nsa1, nsa2 in peerswith:
@@ -43,14 +57,24 @@ def graph_data(peerswith, peerswithmismatches, unknownpeers):
             json_data += " ],\"links\":[ "
         else:
             json_data += ", "
-        json_data += "{\"source\":" + str(nsa_list.index(nsa1)) + ",\"target\":" + str(nsa_list.index(nsa2)) + ",\"value\":2}"
+        json_data += "{\"source\":" + str(nsa_list.index(nsa1)) + ",\"target\":" + str(nsa_list.index(nsa2)) + ",\"value\":3}"
 
     for nsa1, nsa2 in peerswithmismatches:
-        json_data += ", {\"source\":" + str(nsa_list.index(nsa1)) + ",\"target\":" + str(nsa_list.index(nsa2)) + ",\"value\":3}"
+        json_data += ", {\"source\":" + str(nsa_list.index(nsa1)) + ",\"target\":" + str(nsa_list.index(nsa2)) + ",\"value\":4}"
 
     json_data += " ]}"
 
     return json_data
+
+
+def get_isaliasdomains(isalias):
+    isalias_col0 = [row[0] for row in isalias]
+    return duplicates_remove(isalias_col0)
+
+
+def get_isaliasvlansdomains(isaliasvlans):
+    isaliasvlans_col0 = [row[0] for row in isaliasvlans]
+    return duplicates_remove(isaliasvlans_col0)
 
 
 def cpm(request):
@@ -67,7 +91,7 @@ def cpm(request):
 
     db.database_end(db_connection)
 
-    context = {'graph_data': graph_data(peerswith, peerswithmismatches, unknownpeers), 'unknownpeers' : unknownpeers, 'nopeers' : nopeers, 'peerswithmismatches': peerswithmismatches, 'notref': notref, 'cp_connectivity': simplejson.dumps(cp_connectivity)}
+    context = {'graph_data': graph_data(peerswith, peerswithmismatches, unknownpeers, cp_connectivity), 'unknownpeers' : unknownpeers, 'nopeers' : nopeers, 'peerswithmismatches': peerswithmismatches, 'notref': notref, 'cp_connectivity': simplejson.dumps(cp_connectivity)}
 
     return render(request, 'gui/cpm.html', context)
 
@@ -78,9 +102,10 @@ def dpm(request):
     cursor = db_connection.cursor()
 
     isalias = db.get_isalias(cursor)
+    isaliasvlans = db.get_isaliasvlans(cursor)
 
     db.database_end(db_connection)
 
-    context = {'isalias' : isalias}
+    context = {'isalias' : simplejson.dumps(isalias), 'isaliasvlans' : simplejson.dumps(isaliasvlans), 'isalias_domains': get_isaliasdomains(isalias), 'isaliasvlans_domains': get_isaliasvlansdomains(isaliasvlans)}
 
     return render(request, 'gui/dpm.html', context)
