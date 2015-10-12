@@ -19,8 +19,8 @@ from django.contrib import admin
 
 urlpatterns = [
                        #url(r'^$', 'gui.views.index', name='index'),
-                       url(r'^$', RedirectView.as_view(url='overview', permanent=False), name='index'),
-                       url(r'^overview$', 'gui.views.index', name='index'),
+                       url(r'^$', RedirectView.as_view(url='overview', permanent=False), name='overview'),
+                       url(r'^overview$', 'gui.views.overview', name='overview'),
                        url(r'^dpm$', 'gui.views.dpm', name='dpm'),
                        url(r'^cpm$', 'gui.views.cpm', name='cpm'),
                        #url(r'^admin/', include(admin.site.urls)),

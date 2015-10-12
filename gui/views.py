@@ -1,16 +1,12 @@
 from django.shortcuts import render
 import db_functions as db
-import json
 import simplejson
-
-def index(request):
-    return render(request, 'gui/index.html')
 
 
 def duplicates_remove(seq):
     seen = set()
     seen_add = seen.add
-    return [ x for x in seq if not (x in seen or seen_add(x))]
+    return [x for x in seq if not (x in seen or seen_add(x))]
 
 
 def is_reachable(nsa, cp_connectivity):
@@ -67,14 +63,92 @@ def graph_data(peerswith, peerswithmismatches, unknownpeers, cp_connectivity):
     return json_data
 
 
-def get_isaliasdomains(isalias):
-    isalias_col0 = [row[0] for row in isalias]
-    return duplicates_remove(isalias_col0)
+def get_domains(array):
+    col0 = [row[0] for row in array]
+    return duplicates_remove(col0)
 
 
-def get_isaliasvlansdomains(isaliasvlans):
-    isaliasvlans_col0 = [row[0] for row in isaliasvlans]
-    return duplicates_remove(isaliasvlans_col0)
+def get_cp_overview(peerswith, nopeers, unknownpeers, peerswithmismatches, notref, cp_connectivity):
+
+    domains_list = [row[0] for row in cp_connectivity]
+
+    # domain, #peerswith, nopeers, #unknownpeers, #peerswithmismatches, notref, cp_connectivity
+    overview = []
+
+    for domain in domains_list:
+        peerswith_count = [row[0] for row in peerswith].count(domain)
+        peerswithmismatches_count = [row[0] for row in peerswithmismatches].count(domain)
+        unknownpeers_count = [row[0] for row in unknownpeers].count(domain)
+
+        if domain in nopeers:
+            has_nopeers = 'Yes'
+        else:
+            has_nopeers = 'No'
+
+        if domain in notref:
+            is_notref = 'Yes'
+        else:
+            is_notref = 'No'
+
+        if cp_connectivity[[row[0] for row in cp_connectivity].index(domain)] == 0:
+            connectivity = 'Yes'
+        else:
+            connectivity = 'No'
+
+        overview.append([domain, peerswith_count, has_nopeers, unknownpeers_count, peerswithmismatches_count, is_notref, connectivity])
+
+    return overview
+
+
+def get_dp_overview(isalias, isaliasvlans, isaliasmatches):
+
+    isalias_domains = get_domains(isalias)
+    isaliasmatches_domains = get_domains(isaliasmatches)
+
+    domains_list = duplicates_remove(isalias_domains + isaliasmatches_domains)
+
+    # domain, #isalias, #isaliasvlans
+    overview = []
+
+    for domain in domains_list:
+        isalias_count = [row[0] for row in isalias].count(domain)
+        isaliasvlans_count = [row[0] for row in isaliasvlans].count(domain)
+
+        overview.append([domain, isalias_count, isaliasvlans_count])
+
+    return overview
+
+
+def overview(request):
+
+    db_connection = db.database_start()
+    cursor = db_connection.cursor()
+
+    peerswith = db.get_peerswith(cursor)
+    nopeers = db.get_nopeers(cursor)
+    unknownpeers = db.get_unknownpeers(cursor)
+    peerswithmismatches = db.get_peerswithmismatches(cursor)
+    notref = db.get_notref(cursor)
+    cp_connectivity = db.get_cp_connectivity(cursor)
+    isalias = db.get_isalias(cursor)
+    isaliasvlans = db.get_isaliasvlans(cursor)
+    isaliasmatches = db.get_isaliasmatches(cursor)
+
+    db.database_end(db_connection)
+
+    cp_overview = get_cp_overview(peerswith, nopeers, unknownpeers, peerswithmismatches, notref, cp_connectivity)
+    dp_overview = get_dp_overview(isalias, isaliasvlans, isaliasmatches)
+
+    #DEBUG
+    f = open('/tmp/debug_info', 'w')
+    simplejson.dump(cp_overview, f)
+    f.write("\n\n\n DP OVERVIEW \n\n\n")
+    simplejson.dump(dp_overview, f)
+    f.close()
+
+    context = {'cp_overview': cp_overview, 'dp_overview': dp_overview}
+
+    return render(request, 'gui/index.html', context)
 
 
 def cpm(request):
@@ -106,6 +180,6 @@ def dpm(request):
 
     db.database_end(db_connection)
 
-    context = {'isalias' : simplejson.dumps(isalias), 'isaliasvlans' : simplejson.dumps(isaliasvlans), 'isalias_domains': get_isaliasdomains(isalias), 'isaliasvlans_domains': get_isaliasvlansdomains(isaliasvlans)}
+    context = {'isalias' : simplejson.dumps(isalias), 'isaliasvlans' : simplejson.dumps(isaliasvlans), 'isalias_domains': get_domains(isalias), 'isaliasvlans_domains': get_domains(isaliasvlans)}
 
     return render(request, 'gui/dpm.html', context)
