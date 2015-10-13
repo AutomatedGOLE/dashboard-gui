@@ -1,0 +1,75 @@
+{% extends 'gui/main.html' %}
+{% block content %}
+<style>
+    .table thead th{
+        vertical-align: middle;
+        text-align: center;
+    }
+
+
+</style>
+<div class="content">
+    {% csrf_token %}
+    <!--<h2>-->
+        <!--Overview-->
+    <!--</h2>-->
+    <section>
+        <h1>
+            Control Plane Overview
+        </h1>
+        <div class="content">
+            <table class="table table-bordered table-striped" >
+                <thead>
+                <tr>
+                    <th width="215px">Domain</th>
+                    <th>PeersWith (Bidirectional)</th>
+                    <th>PeersWith (Unirectional)</th>
+                    <th>Has Peers?</th>
+                    <th>Has Unknown Peers?</th>
+                    <th>Referenced by other domains?</th>
+                    <th>Is Reachable?</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for domain, peerswith_count, has_nopeers, unknownpeers_count, peerswithmismatches_count, is_notref, connectivity in cp_overview %}
+                <tr>
+                    <td>{{ domain }}</td>
+                    <td style="text-align: center">{{ peerswith_count }}</td>
+                    <td style="text-align: center">{{ peerswithmismatches_count }}</td>
+                    <td style="text-align: center">{{ has_nopeers }}</td>
+                    <td style="text-align: center">{{ unknownpeers_count }}</td>
+                    <td style="text-align: center">{{ is_notref }}</td>
+                    <td style="text-align: center">{{ connectivity }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+     <section>
+        <h1>
+            Data Plane Overview
+        </h1>
+        <div class="content">
+            <table class="table table-bordered table-striped" >
+                <thead>
+                <tr>
+                    <th>Domain</th>
+                    <th>isAlias Port Mismatches</th>
+                    <th>isAlias VLAN Mismatches</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for domain, isalias_count, isaliasvlans_count in cp_overview %}
+                <tr>
+                    <td>{{ domain }}</td>
+                    <td style="text-align: center">{{ isalias_count }}</td>
+                    <td style="text-align: center">{{ isaliasvlans_count }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+{% endblock %}

@@ -80,22 +80,27 @@ def get_cp_overview(peerswith, nopeers, unknownpeers, peerswithmismatches, notre
         peerswithmismatches_count = [row[0] for row in peerswithmismatches].count(domain)
         unknownpeers_count = [row[0] for row in unknownpeers].count(domain)
 
-        if domain in nopeers:
-            has_nopeers = 'Yes'
-        else:
+        # It will be "has peers?" on the overview table.
+        if any(domain in s for s in nopeers):
             has_nopeers = 'No'
-
-        if domain in notref:
-            is_notref = 'Yes'
         else:
-            is_notref = 'No'
+            has_nopeers = 'Yes'
 
-        if cp_connectivity[[row[0] for row in cp_connectivity].index(domain)] == 0:
+        # It will be "referenced?" on the overview table.
+        if any(domain in s for s in notref):
+            is_notref = 'No'
+        else:
+            is_notref = 'Yes'
+
+        connectivity_index = [row[0] for row in cp_connectivity].index(domain)
+        connectivity_result = [row[1] for row in cp_connectivity][connectivity_index]
+
+        if connectivity_result == 0:
             connectivity = 'Yes'
         else:
             connectivity = 'No'
 
-        overview.append([domain, peerswith_count, has_nopeers, unknownpeers_count, peerswithmismatches_count, is_notref, connectivity])
+        overview.append([str(domain).replace('urn:ogf:network:', ''), peerswith_count, has_nopeers, unknownpeers_count, peerswithmismatches_count, is_notref, connectivity])
 
     return overview
 
@@ -114,7 +119,7 @@ def get_dp_overview(isalias, isaliasvlans, isaliasmatches):
         isalias_count = [row[0] for row in isalias].count(domain)
         isaliasvlans_count = [row[0] for row in isaliasvlans].count(domain)
 
-        overview.append([domain, isalias_count, isaliasvlans_count])
+        overview.append([str(domain).replace('urn:ogf:network:', ''), isalias_count, isaliasvlans_count])
 
     return overview
 
@@ -148,7 +153,7 @@ def overview(request):
 
     context = {'cp_overview': cp_overview, 'dp_overview': dp_overview}
 
-    return render(request, 'gui/index.html', context)
+    return render(request, 'gui/overview.html', context)
 
 
 def cpm(request):
