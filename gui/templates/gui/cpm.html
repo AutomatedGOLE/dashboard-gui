@@ -3,17 +3,7 @@
         <div class="content">
         {% csrf_token %}
              <section>
-                 <!--<div id="graphHolder" align="center">-->
-                     <svg id="cloud" width="930" height="806">
-                        <!--<defs>-->
-                            <!--<marker id="arrow" viewbox="0 -5 10 10" refX="43" refY="0"-->
-                                    <!--markerWidth="6" markerHeight="6" orient="auto">-->
-                                <!--<path d="M0,-5L10,0L0,5Z">-->
-                            <!--</marker>-->
-                       <!--</defs>-->
-                     </svg>
-
-                 <!--</div>-->
+                     <svg id="graph" width="930" height="806"/>
              </section>
             <section>
                 <div id="legend">
@@ -113,101 +103,7 @@
         <script type="text/javascript" src="http://d3js.org/d3.v3.js"></script>
         <script type="text/javascript">
 
-
-//            var graph = {{ graph_data|safe }};
-//
-//            var width = 930, height = 806;
-//
-//            var color = d3.scale.category10();
-//
-//
-//            var svg = d3.select("#cloud");
-//
-//                var force = self.force = d3.layout.force()
-//                    .nodes(graph.nodes)
-//                    .links(graph.links)
-//                    .gravity(.05)
-//                    .distance(120)
-//                    .charge(-400)
-//                    .size([width, height])
-//                    .start();
-//
-//                var links = svg.append("g").selectAll("line.link")
-//                    .data(force.links())
-//                    .enter().append("line")
-//                    .attr("class", "link")
-//                    .attr("marker-end", "url(#arrow)");
-//
-//                force.on("tick", tick);
-//
-//                var node_drag = d3.behavior.drag()
-//                    .on("dragstart", dragstart)
-//                    .on("drag", dragmove)
-//                    .on("dragend", dragend);
-//
-//                function dragstart(d, i) {
-//                    force.stop()
-//                }
-//
-//                function dragmove(d, i) {
-//                    d.px += d3.event.dx;
-//                    d.py += d3.event.dy;
-//                    d.x += d3.event.dx;
-//                    d.y += d3.event.dy;
-//                    tick();
-//                }
-//
-//                function dragend(d, i) {
-//                    d.fixed = true;
-//                    tick();
-//                    force.resume();
-//                }
-//
-//                var nodes = svg.selectAll("g.node")
-//                    .data(graph.nodes)
-//                    .enter().append("svg:g")
-//                    .attr("class", "node")
-//                    .call(node_drag);
-//
-//                nodes.append("circle")
-//                    .attr("class", "circle")
-//                    .attr("r", 30) //radious
-//                    .style("fill", function(d) { return colors[d.group]; })
-////                    .style("stroke", "red")
-////                    .style("stroke", function(d) {
-////                        connectivity = {{ cp_connectivity|safe }};
-////
-////                        for(key in connectivity) {
-////                            if(connectivity[key][0].indexOf(d.name) != -1 ){
-////                                return ping_colors[connectivity[key][1]];
-////                            }
-////                        }
-////                        return ping_colors[2];
-////                        });
-//
-//
-//                function tick() {
-////                    nodes.attr("cx", function(d) { return d.x = Math.max(32, Math.min(width - 32, d.x)); })
-////                        .attr("cy", function(d) { return d.y = Math.max(32, Math.min(height - 32, d.y)); });
-//
-//                    links.attr("x1", function(d) { return d.source.x; })
-//                        .attr("y1", function(d) { return d.source.y; })
-//                        .attr("x2", function(d) { return d.target.x; })
-//                        .attr("y2", function(d) { return d.target.y; });
-//
-//                    nodes.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
-//                };
-
-
-
-
-
-
-
-
             var graph = {{ graph_data|safe }};
-//
-//            var ping = JSON.parse({{ cp_connectivity|safe }});
 
             var width = 930,
                 height = 806;
@@ -220,7 +116,7 @@
 
             var ping_colors = ["#008000", "#d62728", "#000000"]
 
-            var svg = d3.select("#cloud").append("svg:svg");
+            var svg = d3.select("#graph").append("svg:svg");
 //            .attr("width", width)
 //            .attr("height", height);
 

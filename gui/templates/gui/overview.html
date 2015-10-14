@@ -25,7 +25,7 @@
                     <th>PeersWith (Bidirectional)</th>
                     <th>PeersWith (Unirectional)</th>
                     <th>Has Peers?</th>
-                    <th>Has Unknown Peers?</th>
+                    <th>Unknown Peers</th>
                     <th>Referenced by other domains?</th>
                     <th>Is Reachable?</th>
                 </tr>
@@ -54,13 +54,13 @@
             <table class="table table-bordered table-striped" >
                 <thead>
                 <tr>
-                    <th>Domain</th>
+                    <th>Topology</th>
                     <th>isAlias Port Mismatches</th>
                     <th>isAlias VLAN Mismatches</th>
                 </tr>
                 </thead>
                 <tbody>
-                {% for domain, isalias_count, isaliasvlans_count in cp_overview %}
+                {% for domain, isalias_count, isaliasvlans_count in dp_overview %}
                 <tr>
                     <td>{{ domain }}</td>
                     <td style="text-align: center">{{ isalias_count }}</td>

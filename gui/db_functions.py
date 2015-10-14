@@ -65,6 +65,12 @@ def get_cp_connectivity(cursor):
     cursor.execute(query)
     return cursor.fetchall()
 
+
+def get_switch(cursor):
+    query = "SELECT * FROM switch"
+    cursor.execute(query)
+    return cursor.fetchall()
+
 #
 # def matrix_to_dic(matrix):
 #     dic = defaultdict(int)

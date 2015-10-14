@@ -19,7 +19,7 @@
                 var cell2 = row.insertCell(1);
 
                 cell1.innerHTML = isalias_ports[i][1];
-                cell2.innerHTML = isalias_ports[i][3];
+                cell2.innerHTML = isalias_ports[i][2];
             }
         }
     }
@@ -50,23 +50,26 @@
 <div class="content">
     {% csrf_token %}
     <section>
+        <svg id="graph" width="930" height="806"/>
+    </section>
+    <section>
         <h1>
             isAlias Port Mismatches
         </h1>
         <div class="content">
 
-                <div class="content">
-                    <select name="src_domain" id="src_domain_select" onchange="ports_table(this)" align="left">
-                        <option selected="selected" disabled>Select NSA</option>
-                        {% for src_domain in isalias_domains %}
-                        <option value="{{ src_domain }}">{{ src_domain }}</option>
-                        {% endfor %}
-                    </select>
+            <div class="content">
+                <select name="src_domain" id="src_domain_select" onchange="ports_table(this)" align="left">
+                    <option selected="selected" disabled>Select Topology</option>
+                    {% for src_domain in isalias_domains %}
+                    <option value="{{ src_domain }}">{{ src_domain }}</option>
+                    {% endfor %}
+                </select>
 
-                </div>
+            </div>
 
 
-                <table class="table table-bordered table-striped">
+            <table class="table table-bordered table-striped">
                 <thead>
                 <tr>
                     <!--<th>Source Domain</th>-->
@@ -90,18 +93,18 @@
         </h1>
         <div class="content">
 
-                <div class="content">
-                    <select name="src_domain" id="src_domain_select" onchange="vlans_table(this)" align="left">
-                        <option selected="selected" disabled>Select NSA</option>
-                        {% for src_domain in isaliasvlans_domains %}
-                        <option value="{{ src_domain }}">{{ src_domain }}</option>
-                        {% endfor %}
-                    </select>
+            <div class="content">
+                <select name="src_domain" id="src_domain_vlan_select" onchange="vlans_table(this)" align="left">
+                    <option selected="selected" disabled>Select Topology</option>
+                    {% for src_domain in isaliasvlans_domains %}
+                    <option value="{{ src_domain }}">{{ src_domain }}</option>
+                    {% endfor %}
+                </select>
 
-                </div>
+            </div>
 
 
-                <table class="table table-bordered table-striped">
+            <table class="table table-bordered table-striped">
                 <thead>
                 <tr>
                     <th>Source Port</th>
@@ -116,5 +119,136 @@
             </table>
         </div>
     </section>
+
+
+    <section>
+        <h1>
+            Switching Service
+        </h1>
+        <div class="content">
+            <table class="table table-bordered table-striped" >
+                <thead>
+                <tr>
+                    <th>Topology</th>
+                    <th>Label Swapping</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for topology, service, labelswapping in switch %}
+                <tr>
+                    <td style="padding-left: 30px">{{ topology }}</td>
+                    <td style="padding-left: 20px">{{ labelswapping }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
 </div>
+<script type="text/javascript" src="http://d3js.org/d3.v3.js"></script>
+<script type="text/javascript">
+
+    var graph = {{ graph_data|safe }};
+
+    var width = 930,
+            height = 806;
+
+    var colors = ["#31B404", "#d62728", "#FFFF00", "#000000", "#ff7f0e", "#1f77b4"]
+
+    var ping_colors = ["#008000", "#d62728", "#000000"]
+
+    var svg = d3.select("#graph").append("svg:svg");
+
+    var force = self.force = d3.layout.force()
+            .nodes(graph.nodes)
+            .links(graph.links)
+            .gravity(.05)
+            .distance(120)
+            .charge(-400)
+            .size([width, height])
+            .start();
+
+//    svg.append("defs").append("marker")
+//            .attr("id", "arrowheadorange")
+//            .attr("refX", 28)
+//            .attr("refY", 4)
+//            .attr("markerWidth", 10)
+//            .attr("markerHeight", 10)
+//            .attr("orient", "auto")
+//            .style("fill", "#ff7f0e")
+//            .append("path")
+//            .attr("d", "M 0 0 L 8 4 L 0 8 z");
+//
+//
+//    svg.append("defs").append("marker")
+//            .attr("id", "arrowheadblack")
+//            .attr("refX", 28)
+//            .attr("refY", 4)
+//            .attr("markerWidth", 10)
+//            .attr("markerHeight", 10)
+//            .attr("orient", "auto")
+//            .style("fill", "#000000")
+//            .append("path")
+//            .attr("d", "M 0 0 L 8 4 L 0 8 z");
+
+
+    var link = svg.append("g").selectAll("line.link")
+            .data(graph.links)
+            .enter().append("svg:line")
+            .attr("class", "link")
+//            .attr("marker-end", function(d) { if (d.value == 4) {return "url(#arrowheadorange)"}
+//            else {return "url(#arrowheadblack)"}})
+            .style("stroke", function(d) { return colors[d.value]; });
+
+
+    var node_drag = d3.behavior.drag()
+            .on("dragstart", dragstart)
+            .on("drag", dragmove)
+            .on("dragend", dragend);
+
+    function dragstart(d, i) {
+        force.stop()
+    }
+
+    function dragmove(d, i) {
+        d.px += d3.event.dx;
+        d.py += d3.event.dy;
+        d.x += d3.event.dx;
+        d.y += d3.event.dy;
+        tick();
+    }
+
+    function dragend(d, i) {
+        d.fixed = true;
+        tick();
+        force.resume();
+    }
+
+    var node = svg.selectAll("g.node")
+            .data(graph.nodes)
+            .enter().append("svg:g")
+            .attr("class", "node")
+            .call(node_drag);
+
+    node.append("circle")
+            .attr("class", "circle")
+            .attr("r", 25) //radious
+            .style("fill", function(d) { return colors[d.group]; })
+
+    node.append("text")
+            .attr("text-anchor", "middle")
+            .text(function(d) { return d.name });
+
+    force.on("tick", tick);
+
+    function tick() {
+
+        link.attr("x1", function(d) { return d.source.x; })
+                .attr("y1", function(d) { return d.source.y; })
+                .attr("x2", function(d) { return d.target.x; })
+                .attr("y2", function(d) { return d.target.y; });
+
+        node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+    };
+</script>
 {% endblock %}

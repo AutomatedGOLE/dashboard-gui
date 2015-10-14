@@ -21,7 +21,7 @@ def is_reachable(nsa, cp_connectivity):
         return 0
 
 
-def graph_data(peerswith, peerswithmismatches, unknownpeers, cp_connectivity):
+def cp_graph_data(peerswith, peerswithmismatches, unknownpeers, cp_connectivity):
 
     json_data = ''
 
@@ -57,6 +57,44 @@ def graph_data(peerswith, peerswithmismatches, unknownpeers, cp_connectivity):
 
     for nsa1, nsa2 in peerswithmismatches:
         json_data += ", {\"source\":" + str(nsa_list.index(nsa1)) + ",\"target\":" + str(nsa_list.index(nsa2)) + ",\"value\":4}"
+
+    json_data += " ]}"
+
+    return json_data
+
+
+def dp_graph_data(isalias, isaliasvlans, isaliasmatches):
+
+    json_data = ''
+
+    # isalias_col0 = [row[0] for row in isalias]
+    # isalias_col2 = [row[2] for row in isalias]
+
+    isaliasmatches_col0 = [row[0] for row in isaliasmatches]
+    isaliasmatches_col2 = [row[2] for row in isaliasmatches]
+
+    # nsa_list = duplicates_remove(isalias_col0 + isalias_col2 + isaliasmatches_col0 + isaliasmatches_col2)
+    nsa_list = duplicates_remove(isaliasmatches_col0 + isaliasmatches_col2)
+
+    # Add nodes
+    for nsa in nsa_list:
+        if not json_data:
+            json_data = "{ \"nodes\":[ "
+        else:
+            json_data += ", "
+
+        json_data += "{\"name\":\"" + str(nsa).replace('urn:ogf:network:', '') + "\",\"group\":5}"
+
+    # Add links
+    for nsa1, nsa1_port, nsa2, nsa2_port in isaliasmatches:
+        if "links" not in json_data:
+            json_data += " ],\"links\":[ "
+        else:
+            json_data += ", "
+        json_data += "{\"source\":" + str(nsa_list.index(nsa1)) + ",\"target\":" + str(nsa_list.index(nsa2)) + ",\"value\":3}"
+
+    # for nsa1, nsa1_port, nsa2, nsa2_port in isalias:
+    #     json_data += ", {\"source\":" + str(nsa_list.index(nsa1)) + ",\"target\":" + str(nsa_list.index(nsa2)) + ",\"value\":4}"
 
     json_data += " ]}"
 
@@ -170,7 +208,7 @@ def cpm(request):
 
     db.database_end(db_connection)
 
-    context = {'graph_data': graph_data(peerswith, peerswithmismatches, unknownpeers, cp_connectivity), 'unknownpeers' : unknownpeers, 'nopeers' : nopeers, 'peerswithmismatches': peerswithmismatches, 'notref': notref, 'cp_connectivity': simplejson.dumps(cp_connectivity)}
+    context = {'graph_data': cp_graph_data(peerswith, peerswithmismatches, unknownpeers, cp_connectivity), 'unknownpeers' : unknownpeers, 'nopeers' : nopeers, 'peerswithmismatches': peerswithmismatches, 'notref': notref, 'cp_connectivity': simplejson.dumps(cp_connectivity)}
 
     return render(request, 'gui/cpm.html', context)
 
@@ -182,9 +220,11 @@ def dpm(request):
 
     isalias = db.get_isalias(cursor)
     isaliasvlans = db.get_isaliasvlans(cursor)
+    isaliasmatches = db.get_isaliasmatches(cursor)
+    switch = db.get_switch(cursor)
 
     db.database_end(db_connection)
 
-    context = {'isalias' : simplejson.dumps(isalias), 'isaliasvlans' : simplejson.dumps(isaliasvlans), 'isalias_domains': get_domains(isalias), 'isaliasvlans_domains': get_domains(isaliasvlans)}
+    context = {'graph_data': dp_graph_data(isalias, isaliasvlans, isaliasmatches), 'isalias' : simplejson.dumps(isalias), 'isaliasvlans' : simplejson.dumps(isaliasvlans), 'isalias_domains': get_domains(isalias), 'isaliasvlans_domains': get_domains(isaliasvlans), 'switch': switch}
 
     return render(request, 'gui/dpm.html', context)
