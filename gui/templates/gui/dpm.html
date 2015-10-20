@@ -19,7 +19,7 @@
                 var cell2 = row.insertCell(1);
 
                 cell1.innerHTML = isalias_ports[i][1];
-                cell2.innerHTML = isalias_ports[i][2];
+                cell2.innerHTML = isalias_ports[i][3];
             }
         }
     }
@@ -51,6 +51,10 @@
     {% csrf_token %}
     <section>
         <svg id="graph" width="930" height="806"/>
+    </section>
+    <section>
+        <div id="details">
+        </div>
     </section>
     <section>
         <h1>
@@ -146,12 +150,12 @@
     </section>
 </div>
 <script type="text/javascript" src="http://d3js.org/d3.v3.js"></script>
+<!--<script type="text/javascript" src="http://www.json.org/json_parse.js"></script>-->
 <script type="text/javascript">
 
     var graph = {{ graph_data|safe }};
 
-    var width = 930,
-            height = 806;
+    var width = 930, height = 806;
 
     var colors = ["#31B404", "#d62728", "#FFFF00", "#000000", "#ff7f0e", "#1f77b4"]
 
@@ -228,6 +232,50 @@
             .data(graph.nodes)
             .enter().append("svg:g")
             .attr("class", "node")
+            .on("click", function(d){
+//                alert(d.name);
+
+                var details = document.getElementById("details");
+                var isalias_ports = {{ isalias|safe }};
+                var isalias_vlans = {{ isaliasvlans|safe }};
+
+
+                details.innerHTML = "";
+
+                var b = document.createElement('h4');
+                var b_text = document.createTextNode("Details for " + d.name);
+                b.appendChild(b_text);
+                details.appendChild(b);
+                details.appendChild(document.createElement("br"))
+
+                for (var i = 0; i < isalias_ports.length; i++) {
+                    var node_name = "urn:ogf:network:" + d.name
+                    if (isalias_ports[i][0] == node_name) {
+                        var text = isalias_ports[i][1] + " > "  + isalias_ports[i][3];
+                        var node = document.createTextNode(text);
+                        var mismatch_text_b = document.createElement('b');
+                        mismatch_text_b.appendChild(document.createTextNode("isAlias Mismatch: "));
+                        details.appendChild(mismatch_text_b);
+                        details.appendChild(node);
+                        details.appendChild(document.createElement("br"))
+                    }
+                }
+
+                for (var i = 0; i < isalias_vlans.length; i++) {
+                    var node_name = "urn:ogf:network:" + d.name
+                    if (isalias_vlans[i][0] == node_name) {
+                        var text = isalias_vlans[i][1] + " (" + isalias_vlans[i][2] + ") < > " + isalias_vlans[i][4] + " (" + isalias_vlans[i][5] + ")";
+                        var node = document.createTextNode(text);
+                        var mismatch_text_b = document.createElement('b');
+                        mismatch_text_b.appendChild(document.createTextNode("isAlias VLAN Mismatch: "));
+                        details.appendChild(mismatch_text_b);
+                        details.appendChild(node);
+                        details.appendChild(document.createElement("br"))
+                    }
+                }
+
+
+            })
             .call(node_drag);
 
     node.append("circle")

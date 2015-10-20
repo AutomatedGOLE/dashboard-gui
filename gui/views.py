@@ -15,7 +15,7 @@ def is_reachable(nsa, cp_connectivity):
 
     nsa_index = cp_connectivity_col0.index(nsa)
 
-    if int(cp_connectivity_col1[nsa_index]) == 0:
+    if int(cp_connectivity_col1[nsa_index]) != 0:
         return 1
     else:
         return 0
@@ -67,14 +67,27 @@ def dp_graph_data(isalias, isaliasvlans, isaliasmatches):
 
     json_data = ''
 
-    # isalias_col0 = [row[0] for row in isalias]
-    # isalias_col2 = [row[2] for row in isalias]
+    isalias_col0_new = []
+    isalias_col2_new = []
+
+    isalias_col0 = [row[0] for row in isalias]
+    isalias_col2 = [row[2] for row in isalias]
+
+    pos = 0
+
+    for topology in isalias_col2:
+        if topology != '':
+            isalias_col0_new.append(isalias_col0[pos])
+            isalias_col2_new.append(isalias_col2[pos])
+        pos += 1
 
     isaliasmatches_col0 = [row[0] for row in isaliasmatches]
     isaliasmatches_col2 = [row[2] for row in isaliasmatches]
 
-    # nsa_list = duplicates_remove(isalias_col0 + isalias_col2 + isaliasmatches_col0 + isaliasmatches_col2)
-    nsa_list = duplicates_remove(isaliasmatches_col0 + isaliasmatches_col2)
+    isalias_list = duplicates_remove(isalias_col0_new + isalias_col2_new)
+    isaliasmatches_list = duplicates_remove(isaliasmatches_col0 + isaliasmatches_col2)
+
+    nsa_list = duplicates_remove(isaliasmatches_list + isalias_list)
 
     # Add nodes
     for nsa in nsa_list:
@@ -93,12 +106,53 @@ def dp_graph_data(isalias, isaliasvlans, isaliasmatches):
             json_data += ", "
         json_data += "{\"source\":" + str(nsa_list.index(nsa1)) + ",\"target\":" + str(nsa_list.index(nsa2)) + ",\"value\":3}"
 
-    # for nsa1, nsa1_port, nsa2, nsa2_port in isalias:
-    #     json_data += ", {\"source\":" + str(nsa_list.index(nsa1)) + ",\"target\":" + str(nsa_list.index(nsa2)) + ",\"value\":4}"
+    for nsa1, nsa1_port, nsa2, nsa2_port in isalias:
+        if nsa2:
+            json_data += ", {\"source\":" + str(nsa_list.index(nsa1)) + ",\"target\":" + str(nsa_list.index(nsa2)) + ",\"value\":3}"
 
     json_data += " ]}"
 
     return json_data
+
+
+
+# def dp_graph_data(isalias, isaliasvlans, isaliasmatches):
+#
+#     json_data = ''
+#
+#     isalias_col0 = [row[0] for row in isalias]
+#     isalias_col2 = [row[2] for row in isalias]
+#
+#     isaliasmatches_col0 = [row[0] for row in isaliasmatches]
+#     isaliasmatches_col2 = [row[2] for row in isaliasmatches]
+#
+#     nsa_list = duplicates_remove(isalias_col0 + isalias_col2 + isaliasmatches_col0 + isaliasmatches_col2)
+#     # nsa_list = duplicates_remove(isaliasmatches_col0 + isaliasmatches_col2)
+#
+#     # Add nodes
+#     for nsa in nsa_list:
+#         if not json_data:
+#             json_data = "{ \"nodes\":[ "
+#         else:
+#             json_data += ", "
+#
+#
+#         json_data += "{\"name\":\"" + str(nsa).replace('urn:ogf:network:', '') + "\",\"group\":5}"
+#
+#     # Add links
+#     for nsa1, nsa1_port, nsa2, nsa2_port in isaliasmatches:
+#         if "links" not in json_data:
+#             json_data += " ],\"links\":[ "
+#         else:
+#             json_data += ", "
+#         json_data += "{\"source\":" + str(nsa_list.index(nsa1)) + ",\"target\":" + str(nsa_list.index(nsa2)) + ",\"value\":3}"
+#
+#     for nsa1, nsa1_port, nsa2, nsa2_port in isalias:
+#         json_data += ", {\"source\":" + str(nsa_list.index(nsa1)) + ",\"target\":" + str(nsa_list.index(nsa2)) + ",\"value\":4}"
+#
+#     json_data += " ]}"
+#
+#     return json_data
 
 
 def get_domains(array):
@@ -133,7 +187,7 @@ def get_cp_overview(peerswith, nopeers, unknownpeers, peerswithmismatches, notre
         connectivity_index = [row[0] for row in cp_connectivity].index(domain)
         connectivity_result = [row[1] for row in cp_connectivity][connectivity_index]
 
-        if connectivity_result == 0:
+        if connectivity_result > 0:
             connectivity = 'Yes'
         else:
             connectivity = 'No'
