@@ -21,6 +21,19 @@ def is_reachable(nsa, cp_connectivity):
         return 0
 
 
+def is_unknown(nsa, unknowntopologies):
+
+    #DEBUG
+    f = open('/tmp/debug_info', 'w')
+
+    for topology in unknowntopologies:
+        if nsa == ''.join(topology):
+            return 1
+    return 0
+
+    f.close()
+
+
 def cp_graph_data(peerswith, peerswithmismatches, unknownpeers, cp_connectivity):
 
     json_data = ''
@@ -63,9 +76,11 @@ def cp_graph_data(peerswith, peerswithmismatches, unknownpeers, cp_connectivity)
     return json_data
 
 
-def dp_graph_data(isalias, isaliasvlans, isaliasmatches):
+def dp_graph_data(isalias, isaliasvlans, isaliasmatches, unknowntopologies):
 
     json_data = ''
+
+    isaliasvlans_col0 = [row[0] for row in isaliasvlans]
 
     isalias_col0_new = []
     isalias_col2_new = []
@@ -96,7 +111,12 @@ def dp_graph_data(isalias, isaliasvlans, isaliasmatches):
         else:
             json_data += ", "
 
-        json_data += "{\"name\":\"" + str(nsa).replace('urn:ogf:network:', '') + "\",\"group\":5}"
+        if is_unknown(nsa, unknowntopologies):
+            json_data += "{\"name\":\"" + str(nsa).replace('urn:ogf:network:', '') + "\",\"group\":1}"
+        elif nsa in isalias_col0_new or nsa in isaliasvlans_col0:
+            json_data += "{\"name\":\"" + str(nsa).replace('urn:ogf:network:', '') + "\",\"group\":2}"
+        else:
+            json_data += "{\"name\":\"" + str(nsa).replace('urn:ogf:network:', '') + "\",\"group\":5}"
 
     # Add links
     for nsa1, nsa1_port, nsa2, nsa2_port in isaliasmatches:
@@ -113,46 +133,6 @@ def dp_graph_data(isalias, isaliasvlans, isaliasmatches):
     json_data += " ]}"
 
     return json_data
-
-
-
-# def dp_graph_data(isalias, isaliasvlans, isaliasmatches):
-#
-#     json_data = ''
-#
-#     isalias_col0 = [row[0] for row in isalias]
-#     isalias_col2 = [row[2] for row in isalias]
-#
-#     isaliasmatches_col0 = [row[0] for row in isaliasmatches]
-#     isaliasmatches_col2 = [row[2] for row in isaliasmatches]
-#
-#     nsa_list = duplicates_remove(isalias_col0 + isalias_col2 + isaliasmatches_col0 + isaliasmatches_col2)
-#     # nsa_list = duplicates_remove(isaliasmatches_col0 + isaliasmatches_col2)
-#
-#     # Add nodes
-#     for nsa in nsa_list:
-#         if not json_data:
-#             json_data = "{ \"nodes\":[ "
-#         else:
-#             json_data += ", "
-#
-#
-#         json_data += "{\"name\":\"" + str(nsa).replace('urn:ogf:network:', '') + "\",\"group\":5}"
-#
-#     # Add links
-#     for nsa1, nsa1_port, nsa2, nsa2_port in isaliasmatches:
-#         if "links" not in json_data:
-#             json_data += " ],\"links\":[ "
-#         else:
-#             json_data += ", "
-#         json_data += "{\"source\":" + str(nsa_list.index(nsa1)) + ",\"target\":" + str(nsa_list.index(nsa2)) + ",\"value\":3}"
-#
-#     for nsa1, nsa1_port, nsa2, nsa2_port in isalias:
-#         json_data += ", {\"source\":" + str(nsa_list.index(nsa1)) + ",\"target\":" + str(nsa_list.index(nsa2)) + ",\"value\":4}"
-#
-#     json_data += " ]}"
-#
-#     return json_data
 
 
 def get_domains(array):
@@ -237,11 +217,11 @@ def overview(request):
     dp_overview = get_dp_overview(isalias, isaliasvlans, isaliasmatches)
 
     #DEBUG
-    f = open('/tmp/debug_info', 'w')
-    simplejson.dump(cp_overview, f)
-    f.write("\n\n\n DP OVERVIEW \n\n\n")
-    simplejson.dump(dp_overview, f)
-    f.close()
+    # f = open('/tmp/debug_info', 'w')
+    # simplejson.dump(cp_overview, f)
+    # f.write("\n\n\n DP OVERVIEW \n\n\n")
+    # simplejson.dump(dp_overview, f)
+    # f.close()
 
     context = {'cp_overview': cp_overview, 'dp_overview': dp_overview}
 
@@ -276,9 +256,10 @@ def dpm(request):
     isaliasvlans = db.get_isaliasvlans(cursor)
     isaliasmatches = db.get_isaliasmatches(cursor)
     switch = db.get_switch(cursor)
+    unknowntopologies = db.get_unknowntopologies(cursor)
 
     db.database_end(db_connection)
 
-    context = {'graph_data': dp_graph_data(isalias, isaliasvlans, isaliasmatches), 'isalias' : simplejson.dumps(isalias), 'isaliasvlans' : simplejson.dumps(isaliasvlans), 'isalias_domains': get_domains(isalias), 'isaliasvlans_domains': get_domains(isaliasvlans), 'switch': switch}
+    context = {'graph_data': dp_graph_data(isalias, isaliasvlans, isaliasmatches, unknowntopologies), 'isalias' : simplejson.dumps(isalias), 'isaliasvlans' : simplejson.dumps(isaliasvlans), 'isalias_domains': get_domains(isalias), 'isaliasvlans_domains': get_domains(isaliasvlans), 'switch': switch}
 
     return render(request, 'gui/dpm.html', context)

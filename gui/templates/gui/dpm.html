@@ -157,6 +157,7 @@
 
     var width = 930, height = 806;
 
+    // Green, Red, Yellow, Black, Orange, Blue
     var colors = ["#31B404", "#d62728", "#FFFF00", "#000000", "#ff7f0e", "#1f77b4"]
 
     var ping_colors = ["#008000", "#d62728", "#000000"]
@@ -243,7 +244,7 @@
                 details.innerHTML = "";
 
                 var b = document.createElement('h4');
-                var b_text = document.createTextNode("Details for " + d.name);
+                var b_text = document.createTextNode("Details for " + d.name + ":");
                 b.appendChild(b_text);
                 details.appendChild(b);
                 details.appendChild(document.createElement("br"))
