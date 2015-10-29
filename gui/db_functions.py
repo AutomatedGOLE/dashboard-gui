@@ -71,6 +71,29 @@ def get_switch(cursor):
     cursor.execute(query)
     return cursor.fetchall()
 
+
+def get_unknowntopologies(cursor):
+    query = "SELECT * FROM unknowntopologies"
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+def get_switchports(cursor):
+    query = "SELECT * FROM switchports"
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+def get_nsastopologies(cursor):
+    query = "SELECT * FROM nsastopologies"
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+def get_peersroles(cursor):
+    query = "SELECT * FROM peersroles"
+    cursor.execute(query)
+    return cursor.fetchall()
 #
 # def matrix_to_dic(matrix):
 #     dic = defaultdict(int)

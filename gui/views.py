@@ -239,10 +239,12 @@ def cpm(request):
     peerswithmismatches = db.get_peerswithmismatches(cursor)
     notref = db.get_notref(cursor)
     cp_connectivity = db.get_cp_connectivity(cursor)
+    nsastopologies = db.get_nsastopologies(cursor)
+    peersroles = db.get_peersroles(cursor)
 
     db.database_end(db_connection)
 
-    context = {'graph_data': cp_graph_data(peerswith, peerswithmismatches, unknownpeers, cp_connectivity), 'unknownpeers' : unknownpeers, 'nopeers' : nopeers, 'peerswithmismatches': peerswithmismatches, 'notref': notref, 'cp_connectivity': simplejson.dumps(cp_connectivity)}
+    context = {'graph_data': cp_graph_data(peerswith, peerswithmismatches, unknownpeers, cp_connectivity), 'unknownpeers' : unknownpeers, 'nopeers' : nopeers, 'peerswithmismatches': peerswithmismatches, 'notref': notref, 'cp_connectivity': simplejson.dumps(cp_connectivity), 'nsastopologies': simplejson.dumps(nsastopologies), 'peersroles': simplejson.dumps(peersroles)}
 
     return render(request, 'gui/cpm.html', context)
 
@@ -257,9 +259,10 @@ def dpm(request):
     isaliasmatches = db.get_isaliasmatches(cursor)
     switch = db.get_switch(cursor)
     unknowntopologies = db.get_unknowntopologies(cursor)
+    nsastopologies = db.get_nsastopologies(cursor)
 
     db.database_end(db_connection)
 
-    context = {'graph_data': dp_graph_data(isalias, isaliasvlans, isaliasmatches, unknowntopologies), 'isalias' : simplejson.dumps(isalias), 'isaliasvlans' : simplejson.dumps(isaliasvlans), 'isalias_domains': get_domains(isalias), 'isaliasvlans_domains': get_domains(isaliasvlans), 'switch': switch}
+    context = {'graph_data': dp_graph_data(isalias, isaliasvlans, isaliasmatches, unknowntopologies), 'isalias' : simplejson.dumps(isalias), 'isaliasvlans' : simplejson.dumps(isaliasvlans), 'isalias_domains': get_domains(isalias), 'isaliasvlans_domains': get_domains(isaliasvlans), 'switch_domains': get_domains(switch), 'switches': simplejson.dumps(switch), 'nsastopologies': simplejson.dumps(nsastopologies)}
 
     return render(request, 'gui/dpm.html', context)
