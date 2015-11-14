@@ -66,6 +66,12 @@ def get_cp_connectivity(cursor):
     return cursor.fetchall()
 
 
+def get_dp_connectivity(cursor):
+    query = "SELECT * FROM dp_connectivity"
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
 def get_switch(cursor):
     query = "SELECT * FROM switch"
     cursor.execute(query)

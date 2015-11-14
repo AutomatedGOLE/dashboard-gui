@@ -2,6 +2,10 @@
 {% block content %}
         <div class="content">
         {% csrf_token %}
+            <section>
+                The control plane graph shows the NSI control plane peerings. On the graph it is possible to see control plane peering mismatches, NSA host reachability and Unknown NSAs. Alive NSA hosts marked as unreachable might need to allow ICMP traffic.
+                More information for each NSA can be seen by clicking on a node and by looking at the tables below.
+            </section>
              <section>
                      <svg id="graph" width="930" height="806"/>
              </section>
@@ -19,6 +23,7 @@
                  <h1>
                      PeersWith Mismatches
                  </h1>
+                 </br>Peerswith mismatches happen when an NSA has a peersWith statement mentioning a second NSA, but the second NSA does not have a peersWith statement mentioning the first.
                  <div class="content">
                  <table class="table table-bordered table-striped" >
                  <thead>
@@ -42,6 +47,7 @@
                  <h1>
                      No Peers
                  </h1>
+                 </br>NSAs below do not have any peersWith statements.
                  <div class="content">
                  <table class="table table-bordered table-striped" >
                  <thead>
@@ -63,6 +69,7 @@
                  <h1>
                      Unknown Peers
                  </h1>
+                 </br>NSAs below are mentioned in peersWith statements, but were not found.
                  <div class="content">
                  <table class="table table-bordered table-striped" >
                  <thead>

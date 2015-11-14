@@ -77,6 +77,9 @@
 <div class="content">
     {% csrf_token %}
     <section>
+        The control plane graph shows how topologies are connected. On the graph it is possible to see topologies with mismatches and Unknown topologiess. More information for each topology can be seen by clicking on a node and by looking at the tables below.
+    </section>
+    <section>
         <svg id="graph" width="930" height="806"/>
     </section>
     <section>
@@ -84,9 +87,16 @@
         </div>
     </section>
     <section>
+        <div id="legend">
+            {% load staticfiles %}
+            <img src="{% static "images/dp_legend.png" %}" width="800px">
+        </div>
+    </section>
+    <section>
         <h1>
             isAlias Port Mismatches
         </h1>
+        </br>isAlias Port mismatches happen when a topology has an isAlias statement mentioning a second topology, but the second topology does not have an isAlias statement mentioning the first.
         <div class="content">
 
             <div class="content">
@@ -122,6 +132,7 @@
         <h1>
             isAlias VLAN Mismatches
         </h1>
+        </br>isAlias VLAN mismatches happen when two topologies have matching isAlias Port statements, but the VLAN range specified do not match.
         <div class="content">
 
             <div class="content">
@@ -152,68 +163,69 @@
     </section>
 
     <section>
-            <h1>
-                Switching Service
-            </h1>
+        <h1>
+            Switching Service
+        </h1>
+        </br>Switching services are used to interconnect physical ports in a topology. Default and Wildcard switching services include all ports in a topology, while Standard switching services have specific ports defined.
+        <div class="content">
+
             <div class="content">
+                <select name="src_domain" id="src_domain_switch_select" onchange="switching_table(this)" align="left">
+                    <option selected="selected" disabled>Select Topology</option>
+                    {% for src_domain in switch_domains %}
+                    <option value="{{ src_domain }}">{{ src_domain }}</option>
+                    {% endfor %}
+                </select>
 
-                <div class="content">
-                    <select name="src_domain" id="src_domain_switch_select" onchange="switching_table(this)" align="left">
-                        <option selected="selected" disabled>Select Topology</option>
-                        {% for src_domain in switch_domains %}
-                        <option value="{{ src_domain }}">{{ src_domain }}</option>
-                        {% endfor %}
-                    </select>
-
-                </div>
-
-
-                <table class="table table-bordered table-striped">
-                    <thead>
-                    <tr>
-                        <th>Switching Service</th>
-                        <th>Label Swapping</th>
-                        <th>Switch Type</th>
-                        <!--<th>Label Type</th>-->
-                        <!--<th>Encoding</th>-->
-                    </tr>
-                    </thead>
-                    <tbody id="switch_table">
-
-                    </tbody>
-                </table>
             </div>
-        </section>
+
+
+            <table class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th>Switching Service</th>
+                    <th>Label Swapping</th>
+                    <th>Switch Type</th>
+                    <!--<th>Label Type</th>-->
+                    <!--<th>Encoding</th>-->
+                </tr>
+                </thead>
+                <tbody id="switch_table">
+
+                </tbody>
+            </table>
+        </div>
+    </section>
     <!--<section>-->
-        <!--<h1>-->
-            <!--Switching Service-->
-        <!--</h1>-->
-        <!--<div class="content">-->
-            <!--<table class="table table-bordered table-striped" >-->
-                <!--<thead>-->
-                <!--<tr>-->
-                    <!--<th>Topology</th>-->
-                    <!--<th>Switch Service</th>-->
-                    <!--<th>Label Swapping</th>-->
-                    <!--<th>Switch Type</th>-->
-                    <!--&lt;!&ndash;<th>Label Type</th>&ndash;&gt;-->
-                    <!--&lt;!&ndash;<th>Encoding</th>&ndash;&gt;-->
-                <!--</tr>-->
-                <!--</thead>-->
-                <!--<tbody>-->
-                <!--{% for topology, service, labelswapping, labeltype, switchtype, encoding in switch %}-->
-                <!--<tr>-->
-                    <!--<td style="padding-left: 30px">{{ topology }}</td>-->
-                    <!--<td style="padding-left: 20px">{{ service }}</td>-->
-                    <!--<td style="padding-left: 20px">{{ labelswapping }}</td>-->
-                    <!--<td style="padding-left: 30px">{{ switchtype }}</td>-->
-                    <!--&lt;!&ndash;<td style="padding-left: 20px">{{ labeltype }}</td>&ndash;&gt;-->
-                    <!--&lt;!&ndash;<td style="padding-left: 20px">{{ encoding }}</td>&ndash;&gt;-->
-                <!--</tr>-->
-                <!--{% endfor %}-->
-                <!--</tbody>-->
-            <!--</table>-->
-        <!--</div>-->
+    <!--<h1>-->
+    <!--Switching Service-->
+    <!--</h1>-->
+    <!--<div class="content">-->
+    <!--<table class="table table-bordered table-striped" >-->
+    <!--<thead>-->
+    <!--<tr>-->
+    <!--<th>Topology</th>-->
+    <!--<th>Switch Service</th>-->
+    <!--<th>Label Swapping</th>-->
+    <!--<th>Switch Type</th>-->
+    <!--&lt;!&ndash;<th>Label Type</th>&ndash;&gt;-->
+    <!--&lt;!&ndash;<th>Encoding</th>&ndash;&gt;-->
+    <!--</tr>-->
+    <!--</thead>-->
+    <!--<tbody>-->
+    <!--{% for topology, service, labelswapping, labeltype, switchtype, encoding in switch %}-->
+    <!--<tr>-->
+    <!--<td style="padding-left: 30px">{{ topology }}</td>-->
+    <!--<td style="padding-left: 20px">{{ service }}</td>-->
+    <!--<td style="padding-left: 20px">{{ labelswapping }}</td>-->
+    <!--<td style="padding-left: 30px">{{ switchtype }}</td>-->
+    <!--&lt;!&ndash;<td style="padding-left: 20px">{{ labeltype }}</td>&ndash;&gt;-->
+    <!--&lt;!&ndash;<td style="padding-left: 20px">{{ encoding }}</td>&ndash;&gt;-->
+    <!--</tr>-->
+    <!--{% endfor %}-->
+    <!--</tbody>-->
+    <!--</table>-->
+    <!--</div>-->
     <!--</section>-->
 </div>
 <script type="text/javascript" src="http://d3js.org/d3.v3.js"></script>
@@ -240,28 +252,28 @@
             .size([width, height])
             .start();
 
-//    svg.append("defs").append("marker")
-//            .attr("id", "arrowheadorange")
-//            .attr("refX", 28)
-//            .attr("refY", 4)
-//            .attr("markerWidth", 10)
-//            .attr("markerHeight", 10)
-//            .attr("orient", "auto")
-//            .style("fill", "#ff7f0e")
-//            .append("path")
-//            .attr("d", "M 0 0 L 8 4 L 0 8 z");
-//
-//
-//    svg.append("defs").append("marker")
-//            .attr("id", "arrowheadblack")
-//            .attr("refX", 28)
-//            .attr("refY", 4)
-//            .attr("markerWidth", 10)
-//            .attr("markerHeight", 10)
-//            .attr("orient", "auto")
-//            .style("fill", "#000000")
-//            .append("path")
-//            .attr("d", "M 0 0 L 8 4 L 0 8 z");
+    //    svg.append("defs").append("marker")
+    //            .attr("id", "arrowheadorange")
+    //            .attr("refX", 28)
+    //            .attr("refY", 4)
+    //            .attr("markerWidth", 10)
+    //            .attr("markerHeight", 10)
+    //            .attr("orient", "auto")
+    //            .style("fill", "#ff7f0e")
+    //            .append("path")
+    //            .attr("d", "M 0 0 L 8 4 L 0 8 z");
+    //
+    //
+    //    svg.append("defs").append("marker")
+    //            .attr("id", "arrowheadblack")
+    //            .attr("refX", 28)
+    //            .attr("refY", 4)
+    //            .attr("markerWidth", 10)
+    //            .attr("markerHeight", 10)
+    //            .attr("orient", "auto")
+    //            .style("fill", "#000000")
+    //            .append("path")
+    //            .attr("d", "M 0 0 L 8 4 L 0 8 z");
 
 
     var link = svg.append("g").selectAll("line.link")
@@ -307,60 +319,60 @@
                 var isalias_ports = {{ isalias|safe }};
                 var isalias_vlans = {{ isaliasvlans|safe }};
                 var nsastopologies = {{ nsastopologies|safe }};
+                var dp_connectivity = {{ dp_connectivity|safe }};
+
+    details.innerHTML = "";
+
+    var b = document.createElement('h4');
+    var b_text = document.createTextNode("Details for " + d.name + ":");
+    b.appendChild(b_text);
+    details.appendChild(b);
+    details.appendChild(document.createElement("br"))
+
+    for (var i = 0; i < nsastopologies.length; i++) {
+        var node_name = "urn:ogf:network:" + d.name
+        if (nsastopologies[i][1] == node_name) {
+            var text = nsastopologies[i][0];
+            var node = document.createTextNode(text);
+            var text_b = document.createElement('b');
+            text_b.appendChild(document.createTextNode("NSA: "));
+            details.appendChild(text_b);
+            details.appendChild(node);
+            details.appendChild(document.createElement("br"))
+        }
+    }
+
+    details.appendChild(document.createElement("br"))
+
+    for (var i = 0; i < isalias_ports.length; i++) {
+        var node_name = "urn:ogf:network:" + d.name
+        if (isalias_ports[i][0] == node_name) {
+            var text = isalias_ports[i][1] + " > "  + isalias_ports[i][3];
+            var node = document.createTextNode(text);
+            var mismatch_text_b = document.createElement('b');
+            mismatch_text_b.appendChild(document.createTextNode("isAlias Mismatch: "));
+            details.appendChild(mismatch_text_b);
+            details.appendChild(node);
+            details.appendChild(document.createElement("br"))
+        }
+    }
+
+    for (var i = 0; i < isalias_vlans.length; i++) {
+        var node_name = "urn:ogf:network:" + d.name
+        if (isalias_vlans[i][0] == node_name) {
+            var text = isalias_vlans[i][1] + " (" + isalias_vlans[i][2] + ") < > " + isalias_vlans[i][4] + " (" + isalias_vlans[i][5] + ")";
+            var node = document.createTextNode(text);
+            var mismatch_text_b = document.createElement('b');
+            mismatch_text_b.appendChild(document.createTextNode("isAlias VLAN Mismatch: "));
+            details.appendChild(mismatch_text_b);
+            details.appendChild(node);
+            details.appendChild(document.createElement("br"))
+        }
+    }
 
 
-                details.innerHTML = "";
-
-                var b = document.createElement('h4');
-                var b_text = document.createTextNode("Details for " + d.name + ":");
-                b.appendChild(b_text);
-                details.appendChild(b);
-                details.appendChild(document.createElement("br"))
-
-                for (var i = 0; i < nsastopologies.length; i++) {
-                            var node_name = "urn:ogf:network:" + d.name
-                            if (nsastopologies[i][1] == node_name) {
-                                var text = nsastopologies[i][0];
-                                var node = document.createTextNode(text);
-                                var text_b = document.createElement('b');
-                                text_b.appendChild(document.createTextNode("NSA: "));
-                                details.appendChild(text_b);
-                                details.appendChild(node);
-                                details.appendChild(document.createElement("br"))
-                            }
-                        }
-
-                details.appendChild(document.createElement("br"))
-
-                for (var i = 0; i < isalias_ports.length; i++) {
-                    var node_name = "urn:ogf:network:" + d.name
-                    if (isalias_ports[i][0] == node_name) {
-                        var text = isalias_ports[i][1] + " > "  + isalias_ports[i][3];
-                        var node = document.createTextNode(text);
-                        var mismatch_text_b = document.createElement('b');
-                        mismatch_text_b.appendChild(document.createTextNode("isAlias Mismatch: "));
-                        details.appendChild(mismatch_text_b);
-                        details.appendChild(node);
-                        details.appendChild(document.createElement("br"))
-                    }
-                }
-
-                for (var i = 0; i < isalias_vlans.length; i++) {
-                    var node_name = "urn:ogf:network:" + d.name
-                    if (isalias_vlans[i][0] == node_name) {
-                        var text = isalias_vlans[i][1] + " (" + isalias_vlans[i][2] + ") < > " + isalias_vlans[i][4] + " (" + isalias_vlans[i][5] + ")";
-                        var node = document.createTextNode(text);
-                        var mismatch_text_b = document.createElement('b');
-                        mismatch_text_b.appendChild(document.createTextNode("isAlias VLAN Mismatch: "));
-                        details.appendChild(mismatch_text_b);
-                        details.appendChild(node);
-                        details.appendChild(document.createElement("br"))
-                    }
-                }
-
-
-            })
-            .call(node_drag);
+    })
+    .call(node_drag);
 
     node.append("circle")
             .attr("class", "circle")
