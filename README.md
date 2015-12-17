@@ -25,6 +25,8 @@ python manage.py migrate
 
 ### Start Dashboard GUI ###
 
+```
 python manage.py runserver 0.0.0.0:80
+```
 
 **Note: The command above will start the django web server to serve the dashboard GUI. While it is suitable for development, for longer term deployments, a proper web server (e.g. apache) should be used.**
