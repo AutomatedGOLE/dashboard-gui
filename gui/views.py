@@ -196,6 +196,15 @@ def get_dp_overview(isalias, isaliasvlans, isaliasmatches):
     return overview
 
 
+def tuple_to_string(data):
+    newdata = []
+
+    for item in data:
+        newdata.append(str(item[0]))
+
+    return newdata
+
+
 def overview(request):
 
     db_connection = db.database_start()
@@ -234,10 +243,10 @@ def cpm(request):
     cursor = db_connection.cursor()
 
     peerswith = db.get_peerswith(cursor)
-    nopeers = db.get_nopeers(cursor)
+    nopeers = tuple_to_string(db.get_nopeers(cursor))
     unknownpeers = db.get_unknownpeers(cursor)
     peerswithmismatches = db.get_peerswithmismatches(cursor)
-    notref = db.get_notref(cursor)
+    notref = tuple_to_string(db.get_notref(cursor))
     cp_connectivity = db.get_cp_connectivity(cursor)
     nsastopologies = db.get_nsastopologies(cursor)
     peersroles = db.get_peersroles(cursor)
