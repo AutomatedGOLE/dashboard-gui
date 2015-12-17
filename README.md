@@ -13,7 +13,7 @@ pip install mysql-connector-repackaged
 
 ### Set-up database ###
 
-**Note: Replace username and password as intended**
+**Note: Replace username and password as intended.**
 
 ```
 create database dashboard_django;
